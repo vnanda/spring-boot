@@ -50,12 +50,12 @@ public class EnvironmentInfoContributorTests {
 	public void extractNoEntry() {
 		TestPropertyValues.of("foo=bar").applyTo(this.environment);
 		Info actual = contributeFrom(this.environment);
-		assertThat(actual.getDetails().size()).isEqualTo(0);
+		assertThat(actual.getDetails()).isEmpty();
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void propertiesFromEnvironmentShouldBindCorrectly() throws Exception {
+	public void propertiesFromEnvironmentShouldBindCorrectly() {
 		TestPropertyValues.of("INFO_ENVIRONMENT_FOO=green").applyTo(this.environment,
 				Type.SYSTEM_ENVIRONMENT);
 		Info actual = contributeFrom(this.environment);

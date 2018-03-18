@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.boot.autoconfigure.session.JdbcSessionConfiguration.SpringBootJdbcHttpSessionConfiguration;
 import org.springframework.boot.jdbc.DataSourceInitializationMode;
-import org.springframework.boot.test.context.HideClassesClassLoader;
+import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.assertj.AssertableWebApplicationContext;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -67,10 +67,9 @@ public class SessionAutoConfigurationJdbcTests
 	@Test
 	public void defaultConfigWithUniqueStoreImplementation() {
 		this.contextRunner
-				.withClassLoader(
-						new HideClassesClassLoader(HazelcastSessionRepository.class,
-								MongoOperationsSessionRepository.class,
-								RedisOperationsSessionRepository.class))
+				.withClassLoader(new FilteredClassLoader(HazelcastSessionRepository.class,
+						MongoOperationsSessionRepository.class,
+						RedisOperationsSessionRepository.class))
 				.run(this::validateDefaultConfig);
 	}
 
@@ -118,10 +117,9 @@ public class SessionAutoConfigurationJdbcTests
 
 	@Test
 	public void customTableName() {
-		this.contextRunner
-				.withPropertyValues("spring.session.store-type=jdbc",
-						"spring.session.jdbc.table-name=FOO_BAR",
-						"spring.session.jdbc.schema=classpath:session/custom-schema-h2.sql")
+		this.contextRunner.withPropertyValues("spring.session.store-type=jdbc",
+				"spring.session.jdbc.table-name=FOO_BAR",
+				"spring.session.jdbc.schema=classpath:session/custom-schema-h2.sql")
 				.run((context) -> {
 					JdbcOperationsSessionRepository repository = validateSessionRepository(
 							context, JdbcOperationsSessionRepository.class);

@@ -64,7 +64,8 @@ public class ConditionEvaluationReportLoggingListenerTests {
 		context.refresh();
 		withDebugLogging(() -> this.initializer
 				.onApplicationEvent(new ContextRefreshedEvent(context)));
-		assertThat(this.outputCapture.toString()).contains("AUTO-CONFIGURATION REPORT");
+		assertThat(this.outputCapture.toString())
+				.contains("CONDITIONS EVALUATION REPORT");
 	}
 
 	@Test
@@ -81,7 +82,8 @@ public class ConditionEvaluationReportLoggingListenerTests {
 					() -> this.initializer.onApplicationEvent(new ApplicationFailedEvent(
 							new SpringApplication(), new String[0], context, ex)));
 		}
-		assertThat(this.outputCapture.toString()).contains("AUTO-CONFIGURATION REPORT");
+		assertThat(this.outputCapture.toString())
+				.contains("CONDITIONS EVALUATION REPORT");
 	}
 
 	@Test
@@ -98,12 +100,12 @@ public class ConditionEvaluationReportLoggingListenerTests {
 					new SpringApplication(), new String[0], context, ex));
 		}
 		assertThat(this.outputCapture.toString()).contains("Error starting"
-				+ " ApplicationContext. To display the auto-configuration report re-run"
+				+ " ApplicationContext. To display the conditions report re-run"
 				+ " your application with 'debug' enabled.");
 	}
 
 	@Test
-	public void logsOutput() throws Exception {
+	public void logsOutput() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		this.initializer.initialize(context);
 		context.register(Config.class);
@@ -117,7 +119,7 @@ public class ConditionEvaluationReportLoggingListenerTests {
 	}
 
 	@Test
-	public void canBeUsedInApplicationContext() throws Exception {
+	public void canBeUsedInApplicationContext() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.register(Config.class);
 		new ConditionEvaluationReportLoggingListener().initialize(context);
@@ -126,7 +128,7 @@ public class ConditionEvaluationReportLoggingListenerTests {
 	}
 
 	@Test
-	public void canBeUsedInNonGenericApplicationContext() throws Exception {
+	public void canBeUsedInNonGenericApplicationContext() {
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 		context.setServletContext(new MockServletContext());
 		context.register(Config.class);
@@ -136,19 +138,18 @@ public class ConditionEvaluationReportLoggingListenerTests {
 	}
 
 	@Test
-	public void noErrorIfNotInitialized() throws Exception {
+	public void noErrorIfNotInitialized() {
 		this.initializer
 				.onApplicationEvent(new ApplicationFailedEvent(new SpringApplication(),
 						new String[0], null, new RuntimeException("Planned")));
 		assertThat(this.outputCapture.toString())
-				.contains("Unable to provide auto-configuration report");
+				.contains("Unable to provide the conditions report");
 	}
 
 	private void withDebugLogging(Runnable runnable) {
 		LoggerContext context = (LoggerContext) StaticLoggerBinder.getSingleton()
 				.getLoggerFactory();
-		Logger logger = context
-				.getLogger(ConditionEvaluationReportLoggingListener.class);
+		Logger logger = context.getLogger(ConditionEvaluationReportLoggingListener.class);
 		Level currentLevel = logger.getLevel();
 		logger.setLevel(Level.DEBUG);
 		try {

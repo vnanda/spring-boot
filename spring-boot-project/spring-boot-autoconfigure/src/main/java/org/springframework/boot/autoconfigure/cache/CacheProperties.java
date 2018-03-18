@@ -16,9 +16,9 @@
 
 package org.springframework.boot.autoconfigure.cache;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
@@ -36,7 +36,7 @@ import org.springframework.util.Assert;
 public class CacheProperties {
 
 	/**
-	 * Cache type, auto-detected according to the environment by default.
+	 * Cache type. By default, auto-detected according to the environment.
 	 */
 	private CacheType type;
 
@@ -120,8 +120,8 @@ public class CacheProperties {
 	public static class Caffeine {
 
 		/**
-		 * The spec to use to create caches. Check CaffeineSpec for more details on the
-		 * spec format.
+		 * The spec to use to create caches. See CaffeineSpec for more details on the spec
+		 * format.
 		 */
 		private String spec;
 
@@ -141,24 +141,16 @@ public class CacheProperties {
 	public static class Couchbase {
 
 		/**
-		 * Entry expiration in milliseconds. By default the entries never expire. Note
-		 * that this value is ultimately converted to seconds.
+		 * Entry expiration. By default the entries never expire. Note that this value is
+		 * ultimately converted to seconds.
 		 */
-		private int expiration;
+		private Duration expiration;
 
-		public int getExpiration() {
+		public Duration getExpiration() {
 			return this.expiration;
 		}
 
-		/**
-		 * Return the expiration in seconds.
-		 * @return the expiration in seconds
-		 */
-		public int getExpirationSeconds() {
-			return (int) TimeUnit.MILLISECONDS.toSeconds(this.expiration);
-		}
-
-		public void setExpiration(int expiration) {
+		public void setExpiration(Duration expiration) {
 			this.expiration = expiration;
 		}
 
@@ -217,7 +209,7 @@ public class CacheProperties {
 
 		/**
 		 * Fully qualified name of the CachingProvider implementation to use to retrieve
-		 * the JSR-107 compliant cache manager. Only needed if more than one JSR-107
+		 * the JSR-107 compliant cache manager. Needed only if more than one JSR-107
 		 * implementation is available on the classpath.
 		 */
 		private String provider;
@@ -246,9 +238,9 @@ public class CacheProperties {
 	public static class Redis {
 
 		/**
-		 * Entry expiration in milliseconds. By default the entries never expire.
+		 * Entry expiration. By default the entries never expire.
 		 */
-		private long timeToLive = 0;
+		private Duration timeToLive;
 
 		/**
 		 * Allow caching null values.
@@ -265,11 +257,11 @@ public class CacheProperties {
 		 */
 		private boolean useKeyPrefix = true;
 
-		public long getTimeToLive() {
+		public Duration getTimeToLive() {
 			return this.timeToLive;
 		}
 
-		public void setTimeToLive(long timeToLive) {
+		public void setTimeToLive(Duration timeToLive) {
 			this.timeToLive = timeToLive;
 		}
 

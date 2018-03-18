@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,8 @@ public class Token {
 	private Map<String, Object> parseJson(String base64) {
 		try {
 			byte[] bytes = Base64Utils.decodeFromUrlSafeString(base64);
-			return JsonParserFactory.getJsonParser().parseMap(new String(bytes, StandardCharsets.UTF_8));
+			return JsonParserFactory.getJsonParser()
+					.parseMap(new String(bytes, StandardCharsets.UTF_8));
 		}
 		catch (RuntimeException ex) {
 			throw new CloudFoundryAuthorizationException(Reason.INVALID_TOKEN,
@@ -70,7 +71,7 @@ public class Token {
 	}
 
 	public byte[] getContent() {
-		return this.encoded.substring(0, this.encoded.lastIndexOf(".")).getBytes();
+		return this.encoded.substring(0, this.encoded.lastIndexOf('.')).getBytes();
 	}
 
 	public byte[] getSignature() {

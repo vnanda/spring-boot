@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,46 @@
 
 package org.springframework.boot.actuate.autoconfigure.metrics.export.datadog;
 
-import org.springframework.boot.actuate.autoconfigure.metrics.export.StepRegistryProperties;
+import org.springframework.boot.actuate.autoconfigure.metrics.export.properties.StepRegistryProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * {@link ConfigurationProperties} for configuring Datadog metrics export.
  *
  * @author Jon Schneider
+ * @author Stephane Nicoll
  * @since 2.0.0
  */
-@ConfigurationProperties(prefix = "spring.metrics.export.datadog")
+@ConfigurationProperties(prefix = "management.metrics.export.datadog")
 public class DatadogProperties extends StepRegistryProperties {
 
 	/**
-	 * Your API key, found in your account settings at datadoghq. This property is
-	 * required.
+	 * Datadog API key.
 	 */
 	private String apiKey;
 
 	/**
-	 * The tag that will be mapped to "host" when shipping metrics to datadog, or
-	 * {@code null} if host should be omitted on publishing.
+	 * Datadog application key. Not strictly required, but improves the Datadog experience
+	 * by sending meter descriptions, types, and base units to Datadog.
 	 */
-	private String hostTag;
+	private String applicationKey;
 
 	/**
-	 * The URI to ship metrics to. If you need to publish metrics to an internal proxy
-	 * en-route to datadoghq, you can define the location of the proxy with this.
+	 * Whether to publish descriptions metadata to Datadog. Turn this off to minimize the
+	 * amount of metadata sent.
 	 */
-	private String uri;
+	private boolean descriptions = true;
+
+	/**
+	 * Tag that will be mapped to "host" when shipping metrics to Datadog.
+	 */
+	private String hostTag = "instance";
+
+	/**
+	 * URI to ship metrics to. If you need to publish metrics to an internal proxy
+	 * en-route to Datadog, you can define the location of the proxy with this.
+	 */
+	private String uri = "https://app.datadoghq.com";
 
 	public String getApiKey() {
 		return this.apiKey;
@@ -54,12 +65,28 @@ public class DatadogProperties extends StepRegistryProperties {
 		this.apiKey = apiKey;
 	}
 
+	public String getApplicationKey() {
+		return this.applicationKey;
+	}
+
+	public void setApplicationKey(String applicationKey) {
+		this.applicationKey = applicationKey;
+	}
+
+	public boolean isDescriptions() {
+		return this.descriptions;
+	}
+
+	public void setDescriptions(boolean descriptions) {
+		this.descriptions = descriptions;
+	}
+
 	public String getHostTag() {
 		return this.hostTag;
 	}
 
-	public void setHostKey(String hostKey) {
-		this.hostTag = hostKey;
+	public void setHostTag(String hostTag) {
+		this.hostTag = hostTag;
 	}
 
 	public String getUri() {
@@ -69,4 +96,5 @@ public class DatadogProperties extends StepRegistryProperties {
 	public void setUri(String uri) {
 		this.uri = uri;
 	}
+
 }

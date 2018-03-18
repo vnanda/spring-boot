@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnJava.Range;
 import org.springframework.boot.system.JavaVersion;
-import org.springframework.boot.test.context.HideClassesClassLoader;
+import org.springframework.boot.test.context.FilteredClassLoader;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.testsupport.Assume;
 import org.springframework.context.annotation.Bean;
@@ -66,7 +66,7 @@ public class ConditionalOnJavaTests {
 	}
 
 	@Test
-	public void boundsTests() throws Exception {
+	public void boundsTests() {
 		testBounds(Range.EQUAL_OR_NEWER, JavaVersion.NINE, JavaVersion.EIGHT, true);
 		testBounds(Range.EQUAL_OR_NEWER, JavaVersion.EIGHT, JavaVersion.EIGHT, true);
 		testBounds(Range.EQUAL_OR_NEWER, JavaVersion.EIGHT, JavaVersion.NINE, false);
@@ -76,7 +76,7 @@ public class ConditionalOnJavaTests {
 	}
 
 	@Test
-	public void equalOrNewerMessage() throws Exception {
+	public void equalOrNewerMessage() {
 		ConditionOutcome outcome = this.condition.getMatchOutcome(Range.EQUAL_OR_NEWER,
 				JavaVersion.NINE, JavaVersion.EIGHT);
 		assertThat(outcome.getMessage())
@@ -84,7 +84,7 @@ public class ConditionalOnJavaTests {
 	}
 
 	@Test
-	public void olderThanMessage() throws Exception {
+	public void olderThanMessage() {
 		ConditionOutcome outcome = this.condition.getMatchOutcome(Range.OLDER_THAN,
 				JavaVersion.NINE, JavaVersion.EIGHT);
 		assertThat(outcome.getMessage())
@@ -105,7 +105,7 @@ public class ConditionalOnJavaTests {
 	}
 
 	private String getJavaVersion(Class<?>... hiddenClasses) throws Exception {
-		HideClassesClassLoader classLoader = new HideClassesClassLoader(hiddenClasses);
+		FilteredClassLoader classLoader = new FilteredClassLoader(hiddenClasses);
 		Class<?> javaVersionClass = classLoader.loadClass(JavaVersion.class.getName());
 		Method getJavaVersionMethod = ReflectionUtils.findMethod(javaVersionClass,
 				"getJavaVersion");

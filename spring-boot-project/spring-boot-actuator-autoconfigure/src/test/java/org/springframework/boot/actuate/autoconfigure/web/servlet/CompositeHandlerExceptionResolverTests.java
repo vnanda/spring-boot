@@ -48,18 +48,22 @@ public class CompositeHandlerExceptionResolverTests {
 	private MockHttpServletResponse response = new MockHttpServletResponse();
 
 	@Test
-	public void resolverShouldDelegateToOtherResolversInContext() throws Exception {
+	public void resolverShouldDelegateToOtherResolversInContext() {
 		load(TestConfiguration.class);
-		CompositeHandlerExceptionResolver resolver = (CompositeHandlerExceptionResolver) this.context.getBean(DispatcherServlet.HANDLER_EXCEPTION_RESOLVER_BEAN_NAME);
-		ModelAndView resolved = resolver.resolveException(this.request, this.response, null, new HttpRequestMethodNotSupportedException("POST"));
+		CompositeHandlerExceptionResolver resolver = (CompositeHandlerExceptionResolver) this.context
+				.getBean(DispatcherServlet.HANDLER_EXCEPTION_RESOLVER_BEAN_NAME);
+		ModelAndView resolved = resolver.resolveException(this.request, this.response,
+				null, new HttpRequestMethodNotSupportedException("POST"));
 		assertThat(resolved.getViewName()).isEqualTo("test-view");
 	}
 
 	@Test
-	public void resolverShouldAddDefaultResolverIfNonePresent() throws Exception {
+	public void resolverShouldAddDefaultResolverIfNonePresent() {
 		load(BaseConfiguration.class);
-		CompositeHandlerExceptionResolver resolver = (CompositeHandlerExceptionResolver) this.context.getBean(DispatcherServlet.HANDLER_EXCEPTION_RESOLVER_BEAN_NAME);
-		ModelAndView resolved = resolver.resolveException(this.request, this.response, null, new HttpRequestMethodNotSupportedException("POST"));
+		CompositeHandlerExceptionResolver resolver = (CompositeHandlerExceptionResolver) this.context
+				.getBean(DispatcherServlet.HANDLER_EXCEPTION_RESOLVER_BEAN_NAME);
+		ModelAndView resolved = resolver.resolveException(this.request, this.response,
+				null, new HttpRequestMethodNotSupportedException("POST"));
 		assertThat(resolved).isNotNull();
 	}
 
@@ -94,7 +98,8 @@ public class CompositeHandlerExceptionResolverTests {
 	static class TestHandlerExceptionResolver implements HandlerExceptionResolver {
 
 		@Override
-		public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+		public ModelAndView resolveException(HttpServletRequest request,
+				HttpServletResponse response, Object handler, Exception ex) {
 			return new ModelAndView("test-view");
 		}
 

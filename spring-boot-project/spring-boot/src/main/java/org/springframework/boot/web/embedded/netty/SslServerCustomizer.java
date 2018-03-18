@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Arrays;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
 
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContextBuilder;
 import reactor.ipc.netty.http.server.HttpServerOptions;
 
@@ -31,8 +32,8 @@ import org.springframework.boot.web.server.SslStoreProvider;
 import org.springframework.util.ResourceUtils;
 
 /**
- * {@link NettyServerCustomizer} that configures SSL for the
- * given Reactor Netty server instance.
+ * {@link NettyServerCustomizer} that configures SSL for the given Reactor Netty server
+ * instance.
  *
  * @author Brian Clozel
  */
@@ -58,6 +59,12 @@ public class SslServerCustomizer implements NettyServerCustomizer {
 		if (this.ssl.getCiphers() != null) {
 			sslBuilder = sslBuilder.ciphers(Arrays.asList(this.ssl.getCiphers()));
 		}
+		if (this.ssl.getClientAuth() == Ssl.ClientAuth.NEED) {
+			sslBuilder = sslBuilder.clientAuth(ClientAuth.REQUIRE);
+		}
+		else if (this.ssl.getClientAuth() == Ssl.ClientAuth.WANT) {
+			sslBuilder = sslBuilder.clientAuth(ClientAuth.OPTIONAL);
+		}
 		try {
 			builder.sslContext(sslBuilder.build());
 		}
@@ -66,7 +73,8 @@ public class SslServerCustomizer implements NettyServerCustomizer {
 		}
 	}
 
-	protected KeyManagerFactory getKeyManagerFactory(Ssl ssl, SslStoreProvider sslStoreProvider) {
+	protected KeyManagerFactory getKeyManagerFactory(Ssl ssl,
+			SslStoreProvider sslStoreProvider) {
 		try {
 			KeyStore keyStore = getKeyStore(ssl, sslStoreProvider);
 			KeyManagerFactory keyManagerFactory = KeyManagerFactory
@@ -84,7 +92,8 @@ public class SslServerCustomizer implements NettyServerCustomizer {
 		}
 	}
 
-	private KeyStore getKeyStore(Ssl ssl, SslStoreProvider sslStoreProvider) throws Exception {
+	private KeyStore getKeyStore(Ssl ssl, SslStoreProvider sslStoreProvider)
+			throws Exception {
 		if (sslStoreProvider != null) {
 			return sslStoreProvider.getKeyStore();
 		}
@@ -92,7 +101,8 @@ public class SslServerCustomizer implements NettyServerCustomizer {
 				ssl.getKeyStorePassword());
 	}
 
-	protected TrustManagerFactory getTrustManagerFactory(Ssl ssl, SslStoreProvider sslStoreProvider) {
+	protected TrustManagerFactory getTrustManagerFactory(Ssl ssl,
+			SslStoreProvider sslStoreProvider) {
 		try {
 			KeyStore store = getTrustStore(ssl, sslStoreProvider);
 			TrustManagerFactory trustManagerFactory = TrustManagerFactory
@@ -105,7 +115,8 @@ public class SslServerCustomizer implements NettyServerCustomizer {
 		}
 	}
 
-	private KeyStore getTrustStore(Ssl ssl, SslStoreProvider sslStoreProvider) throws Exception {
+	private KeyStore getTrustStore(Ssl ssl, SslStoreProvider sslStoreProvider)
+			throws Exception {
 		if (sslStoreProvider != null) {
 			return sslStoreProvider.getTrustStore();
 		}
@@ -124,4 +135,5 @@ public class SslServerCustomizer implements NettyServerCustomizer {
 		store.load(url.openStream(), password == null ? null : password.toCharArray());
 		return store;
 	}
+
 }
